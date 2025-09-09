@@ -6,6 +6,7 @@ import pygame
 pygame.init()
 size = 1000,800
 screen = pygame.display.set_mode(size)
+pygame.display.set_caption("Tic Tac Toe game")
 WHITE =(255, 255, 255 )
 BLACK = (0, 0, 0)
 
