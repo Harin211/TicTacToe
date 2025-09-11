@@ -9,6 +9,7 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Tic Tac Toe game")
 WHITE =(255, 255, 255 )
 BLACK = (0, 0, 0)
+squares = [[ 0 for i in range(3)] for i in range(3)]
 
 def grid(screen):
     # horizontally from 200 to 800
@@ -128,8 +129,72 @@ def draw_o(coords, surface):
         pygame.draw.circle(surface, WHITE, (700, 600), 80, 2)
         pygame.display.flip()
 
+def square_is_empty(squares, coords):
+
+    xcoord = coords[0]
+    ycoord = coords[1]
+
+    if (squares[xcoord][ycoord] == 0):
+        return True
+
+    return False
+
+def draw_in_square(squares, curr_square, counter):
+
+    if (square_is_empty(squares, curr_square)):
+        if (counter % 2 == 0):
+            draw_x(curr_square, screen)
+            squares[curr_square[0]][curr_square[1]] = 2
+        else:
+            draw_o(curr_square, screen)
+            squares[curr_square[0]][curr_square[1]] = 7
+        counter += 1
+    return counter
+
+def check_win_sums(squares):
+    new_list = []
+
+    for i in range(3):
+        sum_row = 0
+        sum_col = 0
+        for j in range(3):
+            sum_row += squares[i][j]
+            sum_col += squares[j][i]
+        new_list.append(sum_row)
+        new_list.append(sum_col)
+
+    diagnonal_sum1 = 0
+    diagnonal_sum2 = 0
+    for i in range(3):
+        for j in range(3):
+
+            if (i == j):
+                diagnonal_sum1 += squares[i][j]
+            if (j == (2 - i)):
+                diagnonal_sum2 += squares[i][j]
+
+
+    new_list.append(diagnonal_sum1)
+    new_list.append(diagnonal_sum2)
+        
+    return new_list
+
+def game_over(squares, win_sums):
+
+    print(win_sums)
+
+
+    if (21 in (win_sums) or 6 in (win_sums)):
+        return True
+
+    for i in range(3):
+        for j in range(3):
+            coords = (i,j)
+            if (square_is_empty(squares, coords) == True): return False # game not over return false
+
+    return True
+
 def main():
-    
     clock = pygame.time.Clock()
     running = True
 
@@ -147,17 +212,17 @@ def main():
                 running = False
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # print("Pressing square")
                 pos  = pygame.mouse.get_pos()
-                # print(find_square(pos))
-                square  = find_square(pos)
-                if (counter % 2 == 0):
-                    draw_x(square, screen)
-                else:
-                    draw_o(square, screen)
-
+                curr_square  = find_square(pos)
+                counter = draw_in_square(squares, curr_square, counter)
         
-        counter += 1
+            # print(check_win_sums(squares))
+
+        if (game_over(squares, check_win_sums(squares))):
+            print("game over")
+            break
+
         clock.tick(30)
+
 if __name__ == "__main__":
     main()
